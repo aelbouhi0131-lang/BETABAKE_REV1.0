@@ -1,41 +1,41 @@
 # BetaBake REV 1.0 — Industrial i.MX 6ULL SBC
 
-**BetaBake** est un projet de conception hardware d'une carte informatique embarquée (*Single Board Computer*, SBC) basée sur le **NXP i.MX 6ULL**. L'objectif est de réunir sur une même carte le calcul embarqué, la mémoire, le stockage et plusieurs interfaces utiles à l'intégration dans un système industriel : Ethernet, deux canaux CAN, RS-485, USB, LCD RGB, caméra CSI et Wi-Fi.
+**BetaBake** is a hardware design project for an embedded Single Board Computer (SBC) based on the **NXP i.MX 6ULL**. The goal is to integrate embedded computing, memory, storage, and several interfaces commonly required in industrial systems into a single board, including Ethernet, dual CAN, RS-485, USB, RGB LCD, CSI camera, and Wi-Fi.
 
-> **État du projet : conception schématique et PCB sous Altium Designer, avec documentation 2D et visualisations 3D.** La carte n'ayant pas été fabriquée physiquement, les images Blender présentées ici sont des rendus de visualisation — elles ne constituent pas des photographies d'un prototype assemblé ni une preuve de fonctionnement électrique.
+> **Project status: Hardware schematic and PCB design using Altium Designer, supported by 2D documentation and 3D visualizations.** The board has not been physically manufactured. The Blender images presented here are visualization renders, not photographs of an assembled prototype or evidence of electrical functionality.
 
 ---
 
-## Sommaire
+## Table of Contents
 
-- [Aperçu visuel](#aperçu-visuel)
-- [Objectifs et fonctionnalités](#objectifs-et-fonctionnalités)
-- [Architecture générale](#architecture-générale)
-- [Sous-systèmes hardware](#sous-systèmes-hardware)
-- [Conception du PCB](#conception-du-pcb)
-- [Organisation du dépôt](#organisation-du-dépôt)
-- [Documents et livrables](#documents-et-livrables)
-- [État de validation et points à vérifier](#état-de-validation-et-points-à-vérifier)
-- [Outils utilisés](#outils-utilisés)
-- [Périmètre et limites](#périmètre-et-limites)
+- [Visual Overview](#visual-overview)
+- [Project Objectives and Features](#project-objectives-and-features)
+- [System Architecture](#system-architecture)
+- [Hardware Subsystems](#hardware-subsystems)
+- [PCB Design](#pcb-design)
+- [Repository Structure](#repository-structure)
+- [Documentation and Deliverables](#documentation-and-deliverables)
+- [Validation Status and Outstanding Checks](#validation-status-and-outstanding-checks)
+- [Tools Used](#tools-used)
+- [Scope and Limitations](#scope-and-limitations)
 
-## Aperçu visuel
+## Visual Overview
 
-### Visualisation 3D — Blender
+### 3D Visualization — Blender
 
-Les rendus suivants représentent la carte conçue dans Altium Designer puis visualisée sous Blender. Ils permettent d'examiner l'apparence générale des deux faces sans laisser entendre qu'un exemplaire physique a été assemblé.
+The following renders represent the board designed in Altium Designer and subsequently visualized in Blender. They provide a view of both sides of the PCB without implying that a physical prototype has been assembled.
 
-| Face supérieure | Face inférieure |
+| Top Side | Bottom Side |
 |---|---|
-| ![Rendu Blender de la face supérieure de BetaBake](Images/3D/IMAGES%20BLENDER/1.png) | ![Rendu Blender de la face inférieure de BetaBake](Images/3D/IMAGES%20BLENDER/4.png) |
+| ![Blender render of the BetaBake top side](Images/3D/IMAGES%20BLENDER/1.png) | ![Blender render of the BetaBake bottom side](Images/3D/IMAGES%20BLENDER/4.png) |
 | `Images/3D/IMAGES BLENDER/1.png` | `Images/3D/IMAGES BLENDER/4.png` |
 
-### Couches du PCB — vues 2D
+### PCB Layers — 2D Views
 
-Les images des couches sont disponibles directement dans `Images/2D/`.
+The PCB layer images are available in the `Images/2D/` directory.
 
 <details>
-<summary>Afficher les couches 2D</summary>
+<summary>View 2D PCB layers</summary>
 
 #### Top Layer
 
@@ -59,49 +59,49 @@ Les images des couches sont disponibles directement dans `Images/2D/`.
 
 </details>
 
-> Les captures 2D montrent les vues exportées dans le dépôt. Pour contrôler les connexions, les règles électriques ou les dimensions de fabrication, il faut se reporter au document PCB source et à ses règles de conception ; une image de couche ne suffit pas à effectuer cette vérification.
+> These 2D images show the exported PCB layer views included in the repository. Electrical connectivity, design rules, and manufacturing dimensions must be checked against the source PCB document and its design rules. A layer image alone is insufficient to perform these checks.
 
-## Objectifs et fonctionnalités
+## Project Objectives and Features
 
-BetaBake vise à fournir une plateforme matérielle intégrée pour des applications embarquées nécessitant plusieurs interfaces de communication et des possibilités d'affichage et de capture d'image.
+BetaBake aims to provide an integrated hardware platform for embedded applications requiring multiple communication interfaces, display capabilities, and image acquisition.
 
-| Fonction | Solution prévue dans la conception |
+| Function | Proposed Hardware Solution |
 |---|---|
-| Calcul principal | SoC NXP i.MX 6ULL, référence `MCIMX6Y2DVM08AB` |
-| Mémoire de travail | DDR3L Micron `MT41K256M16TW-107:P`, bus x16, capacité nominale de 512 MiB si la référence et l'organisation sont confirmées |
-| Stockage embarqué | eMMC, référence indiquée dans le schéma `S40FC004C1B1I00000` — à confirmer dans la nomenclature |
-| Mémoire non volatile série | QSPI NOR Winbond `W25Q128JVSIQ` (128 Mbit, soit 16 MiB) |
-| Stockage amovible | Connecteur microSD sur l'interface SD1 |
-| Réseau filaire | Ethernet 10/100 avec PHY TI `DP83848IVV/NOPB` et connecteur RJ45 avec magnétics intégrés prévu |
-| Bus CAN | Deux interfaces FlexCAN avec deux transceivers `TJA1051T/3` |
-| Bus série industriel | RS-485 avec transceiver `MAX3485EESA+T` |
-| USB | Deux interfaces USB OTG prévues dans le schéma |
-| Affichage | Interface LCD parallèle RGB 24 bits |
-| Caméra | Interface caméra parallèle CSI 8 bits exposant données, horloge pixel, synchronisations et MCLK |
-| Connectivité sans fil | Interface Wi-Fi envisagée autour de l'ESP8266EX, pilotée notamment par UART/GPIO |
-| Mise au point | Signaux JTAG et UART/debug exposés dans l'architecture |
+| Main processor | NXP i.MX 6ULL SoC, part number `MCIMX6Y2DVM08AB` |
+| Working memory | Micron DDR3L `MT41K256M16TW-107:P`, x16 interface, nominal capacity of 512 MiB if the part number and organization are confirmed |
+| On-board storage | eMMC, part number shown in the schematic as `S40FC004C1B1I00000` — to be confirmed against the bill of materials |
+| Non-volatile serial memory | Winbond QSPI NOR `W25Q128JVSIQ` (128 Mbit, or 16 MiB) |
+| Removable storage | microSD connector on the SD1 interface |
+| Wired networking | 10/100 Ethernet using the TI `DP83848IVV/NOPB` PHY and a planned RJ45 connector with integrated magnetics |
+| CAN bus | Two FlexCAN interfaces with two `TJA1051T/3` transceivers |
+| Industrial serial bus | RS-485 using the `MAX3485EESA+T` transceiver |
+| USB | Two USB OTG interfaces shown in the schematic |
+| Display | 24-bit parallel RGB LCD interface |
+| Camera | 8-bit parallel CSI camera interface exposing data, pixel clock, synchronization, and MCLK signals |
+| Wireless connectivity | Wi-Fi interface planned around the ESP8266EX, primarily controlled through UART/GPIO |
+| Debugging | JTAG and UART/debug signals exposed in the architecture |
 
-La présence d'une interface dans le schéma décrit l'intention de conception. Elle ne signifie pas qu'elle a été testée sur du matériel réel.
+The presence of an interface in the schematic describes the design intention. It does not mean that the interface has been tested on physical hardware.
 
-## Architecture générale
+## System Architecture
 
-Le SoC central relie la mémoire de travail aux blocs de stockage, de communication, d'affichage et de capture. La structure logique peut être résumée ainsi :
+The central SoC connects the working memory to storage, communication, display, and image acquisition blocks. The logical architecture can be summarized as follows:
 
 ```mermaid
 flowchart TB
-    SOC[ NXP i.MX 6ULL ]
+    SOC[NXP i.MX 6ULL]
     DDR[DDR3L x16<br/>512 MiB nominal]
-    EMMC[eMMC<br/>référence à confirmer]
+    EMMC[eMMC<br/>part number to be confirmed]
     QSPI[QSPI NOR<br/>W25Q128JVSIQ]
     SD[microSD]
-    ETH[Ethernet 10/100<br/>DP83848]
+    ETH[10/100 Ethernet<br/>DP83848]
     CAN[2 × CAN<br/>TJA1051T/3]
     RS[RS-485<br/>MAX3485]
     USB[2 × USB OTG]
-    LCD[LCD RGB 24 bits]
-    CSI[Caméra CSI parallèle 8 bits]
-    WIFI[Wi-Fi envisagé<br/>ESP8266EX]
-    PWR[Alimentation et séquencement]
+    LCD[24-bit RGB LCD]
+    CSI[8-bit parallel CSI camera]
+    WIFI[Planned Wi-Fi<br/>ESP8266EX]
+    PWR[Power management and sequencing]
     DEBUG[JTAG / UART / Debug]
 
     SOC --- DDR
@@ -116,111 +116,175 @@ flowchart TB
     SOC --- CSI
     SOC --- WIFI
     SOC --- DEBUG
-    PWR -. alimente .-> SOC
-    PWR -. rails dédiés .-> DDR
-    PWR -. rails dédiés .-> EMMC
+    PWR -. powers .-> SOC
+    PWR -. dedicated rails .-> DDR
+    PWR -. dedicated rails .-> EMMC
 ```
 
-Le schéma hiérarchique permet de séparer les grands ensembles fonctionnels et de réutiliser des noms de nets entre les feuilles. La structure du dépôt fournie correspond à la révision de projet comprenant notamment `01_Boot_Cfg.SchDoc` et une feuille dédiée `10_CSI.SchDoc`. La révision PDF datée du 21 septembre 2026 retrouvée précédemment utilisait certains noms de feuilles différents : il faut donc traiter le PDF comme un instantané de la conception, et non comme la preuve que tous les noms de feuilles sont identiques à ceux du projet source actuel.
+The hierarchical schematic separates the main functional blocks and uses named nets to connect signals across sheets. The supplied repository structure corresponds to a project revision containing, among other files, `01_Boot_Cfg.SchDoc` and a dedicated `10_CSI.SchDoc` sheet.
 
-## Sous-systèmes hardware
+The schematic PDF recovered from September 21, 2026, used some different sheet names. Therefore, that PDF should be treated as a snapshot of the design rather than proof that every sheet name matches the current source project.
 
-### 1. SoC, horloges et démarrage
+## Hardware Subsystems
 
-Le `MCIMX6Y2DVM08AB` est le composant central. Les signaux documentés comprennent notamment les interfaces mémoire, les banques d'E/S `NVCC`, les signaux de reset et les demandes de gestion d'alimentation. Le schéma fait apparaître un quartz RTC de 32,768 kHz ; les échanges de conception évoquent également une référence système de 24 MHz.
+### 1. SoC, Clocks, and Boot Configuration
 
-Les points importants sont la configuration des broches multiplexées (IOMUX), les niveaux logiques de chaque banque, les états des broches au reset, les straps de démarrage et la séquence des alimentations. Les fonctions UART, CAN, LCD, CSI, Ethernet et Wi-Fi doivent être recoupées dans une table de pin mapping unique afin de détecter les conflits de multiplexage.
+The `MCIMX6Y2DVM08AB` is the central component. The documented signals include memory interfaces, `NVCC` I/O domains, reset signals, and power-management requests. The schematic shows a 32.768 kHz RTC crystal; the design discussions also mention a 24 MHz system clock reference.
 
-### 2. DDR3L
+Important considerations include I/O multiplexing configuration (IOMUX), the logic levels of each I/O bank, pin states during reset, boot straps, and power sequencing. The UART, CAN, LCD, CSI, Ethernet, and Wi-Fi functions must be checked against a single consolidated pin-mapping table to detect multiplexing conflicts.
 
-La mémoire prévue est la Micron `MT41K256M16TW-107:P`. Le schéma expose un bus de données 16 bits, les adresses, les signaux de commande, les strobes DQS et une horloge différentielle. La capacité nominale associée à l'organisation 256M × 16 est de 512 MiB, à confirmer à partir de la référence complète et de sa fiche technique.
+### 2. DDR3L Memory
 
-La DDR3L est l'une des parties les plus sensibles du design. Le placement, les longueurs relatives, l'impédance, les retours de courant, les terminaisons, le réseau VREF et la broche ZQ doivent être contrôlés conformément au guide hardware NXP, à la documentation Micron et aux contraintes du fabricant de PCB. Les valeurs de composants présentes dans le schéma ne doivent pas être considérées comme validées uniquement parce qu'elles figurent sur le dessin.
+The planned memory device is the Micron `MT41K256M16TW-107:P`. The schematic exposes a 16-bit data bus, address signals, control signals, DQS strobes, and a differential clock. The nominal capacity associated with a 256M × 16 organization is 512 MiB, subject to confirmation against the complete part number and datasheet.
 
-### 3. eMMC, QSPI NOR et microSD
+DDR3L is one of the most timing-sensitive parts of the design. Placement, relative trace lengths, impedance, return paths, terminations, the VREF network, and the ZQ pin must be checked against the NXP hardware design guide, Micron documentation, and the PCB manufacturer's capabilities.
 
-**eMMC.** Le schéma prévoit une interface 8 bits avec `EMMC_DATA[7:0]`, `EMMC_CLK`, `EMMC_CMD` et `EMMC_RST`. La référence transcrite dans la révision disponible est `S40FC004C1B1I00000`. Sa référence commerciale exacte, sa capacité, son mode de fonctionnement et ses exigences d'alimentation doivent être confirmés dans la fiche technique et la nomenclature avant le gel du BOM.
+Component values shown in the schematic should not be considered validated merely because they are present in the drawing.
 
-**QSPI NOR.** La mémoire `W25Q128JVSIQ` de Winbond est une NOR série de 128 Mbit (16 MiB). Les signaux QSPI exposés comprennent `QSPI_A_SS0_B`, `QSPI_A_SCLK` et `QSPI_A_DATA[3:0]`. L'usage de cette mémoire pour le démarrage, le firmware ou les données dépendra de la configuration boot et du logiciel effectivement retenus.
+### 3. eMMC, QSPI NOR, and microSD
 
-**microSD.** Un connecteur microSD est dessiné sur l'interface SD1, avec `CLK`, `CMD`, `DATA0–DATA3` et détection mécanique. La présence du connecteur ne prouve pas que la carte microSD est la source de démarrage sélectionnée par défaut.
+**eMMC**
 
-### 4. Ethernet 10/100
+The schematic provides an 8-bit eMMC interface with `EMMC_DATA[7:0]`, `EMMC_CLK`, `EMMC_CMD`, and `EMMC_RST`. The part number transcribed from the available revision is `S40FC004C1B1I00000`.
 
-Le PHY identifié est le TI `DP83848IVV/NOPB`, connecté au SoC en RMII dans le schéma. La feuille Ethernet montre une horloge externe de 50 MHz, les signaux de gestion `MDC/MDIO`, des réseaux analogiques et de polarisation, des protections et un connecteur RJ45 avec magnétics intégrés prévu (`WE-RJ45-7498010210A`). La référence et le brochage exacts du connecteur doivent être vérifiés avec sa documentation fabricant.
+Its exact commercial part number, capacity, operating mode, and power requirements must be confirmed against the datasheet and bill of materials before the BOM is finalized.
 
-Les points de contrôle principaux sont le sens et la source de l'horloge RMII, les straps d'adresse/configuration du PHY, le reset, les résistances de biais, la séparation des références de masse et la stratégie de connexion au châssis. Les paires Ethernet doivent être courtes, correctement appariées, avec peu de vias et sans dérivations inutiles. La protection ESD doit être proche de l'entrée externe.
+**QSPI NOR Flash**
 
-### 5. Double CAN
+The Winbond `W25Q128JVSIQ` is a 128-Mbit (16-MiB) serial NOR Flash memory. The exposed QSPI signals include `QSPI_A_SS0_B`, `QSPI_A_SCLK`, and `QSPI_A_DATA[3:0]`.
 
-Les deux contrôleurs FlexCAN du SoC sont associés à deux transceivers `TJA1051T/3`. Chaque canal dispose d'un connecteur dédié dans le schéma, ainsi que d'une protection et d'un réseau de filtrage/terminaison.
+The use of this memory for boot code, firmware, or other data will depend on the final boot configuration and software architecture.
 
-La topologie exacte des résistances dessinées autour de CANH/CANL doit être vérifiée dans le schéma source. La terminaison de bus doit correspondre à l'architecture physique du réseau — elle ne doit pas être activée arbitrairement sur chaque nœud. Les niveaux logiques, la broche VIO, la protection contre les transitoires et la connexion de masse doivent également être confirmés.
+**microSD**
+
+A microSD connector is shown on the SD1 interface, with `CLK`, `CMD`, `DATA0–DATA3`, and mechanical card detection.
+
+The presence of the connector does not prove that the microSD card is selected as the default boot source.
+
+### 4. 10/100 Ethernet
+
+The identified PHY is the TI `DP83848IVV/NOPB`, connected to the SoC through RMII according to the schematic. The Ethernet sheet shows a 50 MHz external clock, the `MDC/MDIO` management signals, analog and bias networks, protection components, and a planned RJ45 connector with integrated magnetics (`WE-RJ45-7498010210A`).
+
+The exact connector part number and pinout must be checked against the manufacturer's documentation.
+
+The main verification points are the RMII clock source and direction, PHY address/configuration straps, reset, bias resistors, ground-reference strategy, and chassis connection.
+
+The Ethernet differential pairs should be short, appropriately length-matched, routed with minimal vias, and free of unnecessary stubs. ESD protection should be positioned close to the external connector.
+
+### 5. Dual CAN
+
+The SoC's two FlexCAN controllers are connected to two `TJA1051T/3` transceivers. Each channel has a dedicated connector shown in the schematic, together with protection and filtering/termination circuitry.
+
+The exact topology of the resistors connected around CANH/CANL must be checked in the source schematic. Bus termination must reflect the physical network topology; it should not be enabled indiscriminately on every node.
+
+The logic levels, TJA1051T/3 VIO connection, transient protection, and ground connections must also be verified.
 
 ### 6. RS-485
 
-L'interface RS-485 utilise le `MAX3485EESA+T`, piloté par `RS-485_TX`, `RS-485_RX` et `RS-485_MODE`. Une résistance de terminaison de 120 Ω et un réseau de polarisation sont indiqués dans la feuille. Le principe retenu est de placer l'interface en réception par défaut au reset.
+The RS-485 interface uses the `MAX3485EESA+T` transceiver, controlled through `RS-485_TX`, `RS-485_RX`, and `RS-485_MODE`.
 
-Il reste à vérifier les états imposés sur DE et `/RE` au démarrage, le calcul de la polarisation failsafe, la terminaison aux extrémités du bus et la compatibilité de la protection transitoire avec l'application. L'isolation galvanique n'est pas démontrée par la seule présence du transceiver et doit être étudiée en fonction de l'environnement industriel visé.
+A 120 Ω termination resistor and a bias network are shown in the schematic. The intended operating principle is to keep the interface in receive mode by default during reset.
+
+The following points remain to be checked:
+
+- Defined startup states for DE and `/RE`.
+- Fail-safe bias resistor calculations.
+- Termination placement at the physical ends of the bus.
+- Compatibility of the transient protection with the application.
+- Whether galvanic isolation is required for the intended industrial environment.
+
+Galvanic isolation cannot be assumed from the presence of the transceiver alone.
 
 ### 7. USB
 
-Deux ports USB OTG sont prévus. La feuille comporte des connecteurs, des protections ESD et des éléments de protection sur VBUS. Le rôle host/device, la gestion de VBUS, la limitation de courant, la détection de surintensité et le raccordement des blindages doivent être définis et vérifiés. Les paires D+/D− nécessitent un routage correspondant aux contraintes USB 2.0 et au stack-up réel.
+Two USB OTG ports are planned. The corresponding schematic sheet includes connectors, ESD protection, and VBUS protection components.
 
-### 8. LCD RGB et tactile
+The host/device role of each port, VBUS management, current limiting, overcurrent detection, and connector shield connections must be defined and verified.
 
-L'interface du SoC comprend `LCD_DATA[23:0]`, `LCD_CLK`, `LCD_HSYNC`, `LCD_VSYNC` et `LCD_ENABLE`, ainsi que des commandes de reset et d'activation. Les échanges de conception ont retenu comme piste un écran CDTech IPS RGB de 5 pouces avec tactile capacitif ; la référence exacte du module reste à figer.
+The D+/D− pairs require routing that complies with USB 2.0 constraints and the actual PCB stack-up.
 
-Avant finalisation, il faut confirmer le brochage du panneau, les tensions d'E/S, les timings vidéo (fréquence pixel, porches et polarités), le mapping des 24 bits couleur, l'alimentation du rétroéclairage et l'interface du tactile. La compatibilité mécanique doit aussi être vérifiée à partir du dessin du module et du PCB.
+### 8. RGB LCD and Touchscreen
 
-### 9. Caméra CSI
+The SoC interface includes `LCD_DATA[23:0]`, `LCD_CLK`, `LCD_HSYNC`, `LCD_VSYNC`, and `LCD_ENABLE`, along with reset and display-enable control signals.
 
-Le SoC expose une interface CSI parallèle avec `CSI_DATA[7:0]`, `CSI_MCLK`, `CSI_HSYNC`, `CSI_VSYNC` et `CSI_PIXCLK`, ainsi que des signaux de reset et de mise hors tension. Les échanges précédents évoquaient un capteur `MT9M114` et un connecteur FPC 24 broches ; ces éléments doivent être confirmés dans la feuille `10_CSI.SchDoc` et la documentation du capteur retenu.
+The design discussions identified a 5-inch CDTech IPS RGB display with capacitive touch as a candidate. The exact module part number remains to be finalized.
 
-Cette interface parallèle ne doit pas être confondue avec MIPI CSI-2. Il faut vérifier les tensions, la configuration du capteur, les séquences reset/power-down, le brochage FPC, l'ordre des bits et les timings de synchronisation.
+Before the design is frozen, the following must be confirmed:
+
+- Display pinout and I/O voltage levels.
+- Video timings, including pixel clock, porches, and synchronization polarities.
+- Correct mapping of the 24 color-data bits.
+- Backlight power supply and control.
+- Touch controller interface.
+- Mechanical compatibility with the PCB and enclosure.
+
+### 9. CSI Camera
+
+The SoC exposes an 8-bit parallel CSI interface with `CSI_DATA[7:0]`, `CSI_MCLK`, `CSI_HSYNC`, `CSI_VSYNC`, and `CSI_PIXCLK`, along with reset and power-down control signals.
+
+Earlier design discussions mentioned an `MT9M114` sensor and a 24-pin FPC connector. These must be confirmed in `10_CSI.SchDoc` and against the documentation for the selected sensor.
+
+This parallel interface must not be confused with MIPI CSI-2. The sensor power rails, configuration interface, reset/power-down sequences, FPC pinout, data-bit ordering, and synchronization timings all require verification.
 
 ### 10. Wi-Fi
 
-L'intégration Wi-Fi envisagée est basée sur l'ESP8266EX. Les noms de signaux relevés comprennent `WF_U0RXD`, `WF_U0TXD` et `WF_EXT_RSTB`, avec d'autres signaux exposés dans le schéma CPU. La liaison UART est le mécanisme de communication retenu dans les échanges de conception.
+The planned Wi-Fi integration is based on the ESP8266EX. The signal names identified in the design include `WF_U0RXD`, `WF_U0TXD`, and `WF_EXT_RSTB`, along with other signals exposed in the CPU schematic. UART is the communication mechanism discussed for integration.
 
-La section RF complète, la référence exacte du module, l'antenne, l'éventuel réseau d'adaptation et les règles de keep-out ne sont pas confirmés par la seule liste de fichiers fournie. Il faut également vérifier les pointes de courant, le découplage, la stabilité du rail 3,3 V, les straps de boot et la logique de reset avant toute validation.
+The complete RF section, exact module part number, antenna, matching network, and keep-out requirements are not confirmed by the supplied file listing alone.
 
-### 11. Alimentation et séquencement
+The following must also be checked:
 
-Les notes de conception évoquent plusieurs domaines : +12 V, +5 V, 3,3 V, 1,8 V ainsi que des domaines associés au SoC et à la DDR. Les noms proches tels que `VDD_3V3` et `VCC_3V3` ne doivent pas être reliés sans confirmer qu'ils représentent bien le même domaine électrique.
+- 3.3 V supply stability and peak current capability.
+- Local decoupling.
+- Boot strap levels.
+- Reset polarity and sequencing.
+- UART routing.
+- Antenna placement and copper/ground-plane keep-out requirements.
 
-Chaque rail doit être documenté avec sa source, sa tension nominale, ses tolérances, sa capacité en courant, ses charges, son ordre de démarrage et ses moyens de mesure. Le séquencement du SoC, la DDR3L, les rails VCC/VCCQ de l'eMMC et l'état de reset doivent être revus à l'aide des fiches techniques. Les capacités de découplage doivent être validées en tenant compte de leur emplacement physique, de leur boucle de courant et des recommandations constructeur.
+### 11. Power Management and Sequencing
 
-## Conception du PCB
+The design notes mention several power domains: +12 V, +5 V, 3.3 V, and 1.8 V, along with domains associated with the SoC and DDR memory.
 
-La cible de routage discutée pour BetaBake est un PCB multicouche de **8 couches**, avec trois couches de masse dédiées et une couche d'alimentation. L'empilage de travail évoqué est :
+Similar names, such as `VDD_3V3` and `VCC_3V3`, must not be connected without confirming that they represent the same electrical domain.
 
-| Couche | Rôle envisagé |
+Every rail should be documented with its source, nominal voltage, tolerances, current capability, connected loads, startup sequence, and measurement points.
+
+SoC sequencing, DDR3L requirements, eMMC VCC/VCCQ rails, and reset states must be reviewed using the relevant datasheets.
+
+Decoupling capacitors must be assessed based on their physical placement, current loops, electrical characteristics, and the manufacturer's recommendations.
+
+## PCB Design
+
+The discussed target is an **8-layer PCB**, with three dedicated ground layers and one power layer.
+
+The working stack-up proposal is:
+
+| Layer | Intended Role |
 |---|---|
-| L1 | Signaux, composants et fanout local |
-| L2 | Plan GND continu |
-| L3 | Signaux internes, notamment mémoire selon le routage final |
-| L4 | Régions d'alimentation |
-| L5 | Plan GND continu |
-| L6 | Signaux internes, dont eMMC/SD selon l'affectation finale |
-| L7 | Plan GND continu |
-| L8 | Signaux secondaires et éventuel fanout |
+| L1 | Signals, components, and local fanout |
+| L2 | Continuous GND plane |
+| L3 | Internal signals, including memory routing where appropriate |
+| L4 | Power distribution regions |
+| L5 | Continuous GND plane |
+| L6 | Internal signals, including eMMC/SD where appropriate |
+| L7 | Continuous GND plane |
+| L8 | Secondary signals and possible fanout |
 
-Cet empilage est une **proposition de conception**, et non une spécification de fabrication confirmée. Il faut l'adapter au stack-up réel du fabricant et calculer les largeurs/espacements nécessaires aux impédances contrôlées.
+This stack-up is a **design proposal**, not a confirmed manufacturing specification. It must be adapted to the actual stack-up provided by the PCB manufacturer, with suitable trace widths and spacings calculated for the required impedance targets.
 
-Principes à respecter :
+Key layout principles include:
 
-- préserver des plans de retour continus sous les signaux rapides ;
-- ne pas faire traverser une paire différentielle au-dessus d'une fente de plan ;
-- contrôler l'impédance et les longueurs des interfaces concernées ;
-- définir les classes de nets, les règles de clearance, les annular rings et les limites de perçage compatibles avec le fabricant ;
-- garder le découplage près des broches d'alimentation et minimiser les boucles de courant ;
-- vérifier le fanout BGA du SoC et les vias de mémoire par rapport aux capacités de fabrication réelles ;
-- recalculer les zones de cuivre après toute modification du routage.
+- Preserve continuous return planes under high-speed signals.
+- Avoid routing differential pairs over gaps or splits in reference planes.
+- Control impedance and trace lengths for applicable interfaces.
+- Define net classes, clearance rules, annular rings, and drill sizes that comply with manufacturing capabilities.
+- Place decoupling capacitors close to power pins and minimize current-loop areas.
+- Verify the SoC BGA fanout and memory vias against the manufacturer's actual fabrication limits.
+- Recalculate copper pours after routing changes.
 
-Les images de couches contenues dans `Images/2D/` sont des vues de documentation ; le PCB source (`PCB/BetaBake_REV_1.0.PcbDoc`) reste nécessaire pour vérifier le détail du routage et les règles DRC.
+The layer images in `Images/2D/` are documentation views. The source PCB document, `PCB/BetaBake_REV_1.0.PcbDoc`, is required to inspect detailed routing and design rules.
 
-## Organisation du dépôt
+## Repository Structure
 
 ```text
 BETABAKE_REV1.0/
@@ -240,8 +304,8 @@ BETABAKE_REV1.0/
 │       │   ├── BetaBake_REV_1.0.png
 │       │   └── BetaBake_REV_1.01.png
 │       └── IMAGES BLENDER/
-│           ├── 1.png  # Rendu Blender de la face supérieure
-│           └── 4.png  # Rendu Blender de la face inférieure
+│           ├── 1.png  # Blender render of the top side
+│           └── 4.png  # Blender render of the bottom side
 ├── PCB/
 │   ├── BetaBake_REV_1.0.PcbDoc
 │   ├── Copy before routing of BetaBake..PcbDoc
@@ -259,49 +323,61 @@ BETABAKE_REV1.0/
     └── 10_CSI.SchDoc
 ```
 
-### À quoi servent les principaux fichiers ?
+### Main Files and Their Purpose
 
-- `BetaBake_REV_1.0.pdf` : document PDF du projet électronique, utile pour consulter et partager la documentation exportée.
-- `BetaBake_REV_1.0_DRAFTSMAN.pdf` : version de dessin/documentation destinée à une lecture plus orientée plans ; vérifier son contenu exact avant de l'utiliser comme document de fabrication.
-- `Adobe_reader_3D_BetaBake_REV_1.0.pdf` : PDF 3D destiné à la consultation avec un lecteur compatible.
-- `PCB/BetaBake_REV_1.0.PcbDoc` : document PCB Altium source de la révision principale.
-- `PCB/Copy before routing of BetaBake..PcbDoc` : copie de travail antérieure au routage, conservée pour référence ; ce n'est pas nécessairement la version actuelle.
-- `SCHEMATICS/*.SchDoc` : feuilles schématiques par sous-système.
-- `Images/2D/` : exports visuels des couches de PCB.
-- `Images/3D/IMAGES ALTIUM/` : rendus 3D exportés depuis Altium.
-- `Images/3D/IMAGES BLENDER/` : rendus Blender des faces supérieure et inférieure.
+- `BetaBake_REV_1.0.pdf`: exported project PDF for reviewing and sharing the design documentation.
+- `BetaBake_REV_1.0_DRAFTSMAN.pdf`: drawing/documentation-oriented PDF. Its exact contents should be checked before using it as a manufacturing document.
+- `Adobe_reader_3D_BetaBake_REV_1.0.pdf`: 3D PDF intended for viewing with a compatible reader.
+- `PCB/BetaBake_REV_1.0.PcbDoc`: main Altium PCB source document for this revision.
+- `PCB/Copy before routing of BetaBake..PcbDoc`: an earlier pre-routing working copy retained for reference; it is not necessarily the current design.
+- `SCHEMATICS/*.SchDoc`: schematic sheets organized by subsystem.
+- `Images/2D/`: exported PCB layer views.
+- `Images/3D/IMAGES ALTIUM/`: 3D renders exported from Altium.
+- `Images/3D/IMAGES BLENDER/`: Blender renders showing the top and bottom sides.
 
-## Documents et livrables
+## Documentation and Deliverables
 
-Le dépôt comprend les documents listés dans l'arborescence. Il permet de consulter le schéma et le PCB à travers les exports et les fichiers sources Altium, ainsi que des visualisations 2D/3D.
+The repository contains the documents listed in the directory structure. It provides access to schematic and PCB exports, Altium source files, and 2D/3D visualizations.
 
-Avant de qualifier les fichiers comme un **package de fabrication complet**, vérifier au minimum la présence et la cohérence des Gerber ou ODB++, des fichiers NC Drill, du BOM avec références fabricant exactes, des fichiers pick-and-place, des notes d'assemblage, du dessin mécanique et du stack-up fourni par le fabricant. La présence des PDF et du fichier `.PcbDoc` ne garantit pas à elle seule que tous ces livrables sont inclus ou prêts à être envoyés en production.
+Before describing the repository as a **complete manufacturing package**, verify the availability and consistency of the following:
 
-## État de validation et points à vérifier
+- Gerber or ODB++ manufacturing files.
+- NC Drill files.
+- A BOM containing exact manufacturer part numbers.
+- Pick-and-place files.
+- Assembly notes.
+- Mechanical drawings.
+- The final PCB stack-up and manufacturing specifications.
 
-Le projet est documenté au niveau de l'architecture et du design assisté par ordinateur. La carte n'ayant pas été fabriquée, il n'est pas possible de revendiquer un bring-up, une validation en laboratoire ou des mesures électriques sur un prototype.
+The presence of PDFs and the `.PcbDoc` file does not by itself guarantee that all manufacturing deliverables are included or ready for production.
 
-Les principaux contrôles à mener avant fabrication sont :
+## Validation Status and Outstanding Checks
 
-1. **Alimentation et séquencement (priorité haute)** : rails, tolérances, courants, power-up/power-down, brown-out et états reset.
-2. **DDR3L (priorité haute)** : topologie, contraintes temporelles, longueurs, impédances, VREF, ZQ et terminaisons.
-3. **eMMC (priorité haute)** : référence exacte, capacité, mode, VCC/VCCQ, reset et compatibilité du boîtier.
-4. **IOMUX et boot** : vérifier que toutes les interfaces disposent des broches nécessaires sans conflit, notamment CAN, UART Wi-Fi, LCD, CSI, Ethernet, microSD, JTAG et signaux de boot.
-5. **Ethernet RMII** : horloge 50 MHz, straps du PHY, reset, réseau analogique et raccordement au châssis.
-6. **CAN/RS-485** : terminaisons, polarisation, protection de ligne, états au reset et besoin éventuel d'isolation.
-7. **LCD/CSI/Wi-Fi** : références finales, connecteurs, séquences, niveaux logiques, timings, RF et alimentation.
-8. **PCB** : DRC, règles fabricant, contrôle d'impédance, retours de courant, plan de masse, perçages et fanout BGA.
-9. **Documents de production** : valider le jeu final de fichiers et les révisions du schéma/PCB avant transmission au fabricant.
-10. **Bring-up matériel** : après fabrication et assemblage, tester par étapes les rails, horloges, resets, JTAG/UART, démarrage, DDR, stockage puis chaque interface.
+The project is documented at the system architecture and CAD design level. Since the board has not been manufactured, no physical bring-up, laboratory validation, or electrical measurements on a prototype can be claimed.
 
-## Outils utilisés
+The main checks required before manufacturing are:
 
-- **Altium Designer** — conception du schéma hiérarchique et du PCB multicouche, documents de conception et vues 3D.
-- **Blender** — visualisation 3D de la carte pour présenter les faces supérieure et inférieure.
-- **Export PDF et images** — diffusion des schémas, du dessin et des vues de couches.
+1. **Power management and sequencing — high priority:** Verify rail voltages, tolerances, current capability, power-up/power-down sequencing, brown-out behavior, and reset states.
+2. **DDR3L — high priority:** Verify topology, timing constraints, trace lengths, impedance, VREF, ZQ, and termination networks.
+3. **eMMC — high priority:** Confirm the exact part number, capacity, operating mode, VCC/VCCQ requirements, reset, and package compatibility.
+4. **IOMUX and boot configuration:** Ensure that all interfaces have the required pins without conflicts, including CAN, Wi-Fi UART, LCD, CSI, Ethernet, microSD, JTAG, and boot signals.
+5. **RMII Ethernet:** Confirm the 50 MHz clock, PHY straps, reset, analog network, and chassis connection.
+6. **CAN/RS-485:** Verify termination, bias networks, line protection, reset states, and any need for isolation.
+7. **LCD/CSI/Wi-Fi:** Finalize part numbers, connectors, sequencing, logic levels, timings, RF implementation, and power requirements.
+8. **PCB:** Run DRC, verify manufacturer constraints, controlled impedance, return paths, ground planes, drill limits, and BGA fanout.
+9. **Manufacturing documentation:** Validate the final file package and schematic/PCB revision consistency before sending the design to a manufacturer.
+10. **Hardware bring-up:** After manufacturing and assembly, test the power rails, clocks, resets, JTAG/UART, boot sequence, DDR, storage, and each interface step by step.
 
-## Périmètre et limites
+## Tools Used
 
-Ce README consolide l'arborescence fournie et les informations disponibles dans le rapport technique associé à la révision schématique datée du **21 septembre 2026**. Certaines décisions plus récentes — notamment l'organisation des feuilles, les références finales de l'écran, du capteur caméra, de l'eMMC et l'intégration Wi-Fi — doivent être vérifiées dans les fichiers sources actuellement présents dans le dépôt.
+- **Altium Designer** — hierarchical schematic design, multilayer PCB layout, design documentation, and 3D PCB views.
+- **Blender** — 3D visualization of the PCB to present its top and bottom sides.
+- **PDF and image exports** — sharing schematics, drawings, and PCB layer views.
 
-**BetaBake est présenté comme un projet de conception hardware et de PCB, pas comme un produit industriel testé.** Les rendus Blender sont des représentations visuelles de la conception CAO. La validation électrique, la fabricabilité et le fonctionnement réel restent à établir par revue formelle, fabrication et tests sur matériel.
+## Scope and Limitations
+
+This README consolidates the supplied repository structure and the information available in the technical report associated with the schematic revision dated **September 21, 2026**.
+
+Some later design decisions — particularly the schematic sheet organization, final display and camera references, exact eMMC part number, and Wi-Fi integration — must be checked against the source files currently present in the repository.
+
+**BetaBake is presented as a hardware and PCB design project, not as a tested industrial product.** The Blender renders are visual representations of the CAD design. Electrical validation, manufacturability, and real-world operation remain to be established through formal design review, manufacturing, and testing.
