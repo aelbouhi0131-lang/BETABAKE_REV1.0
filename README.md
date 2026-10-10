@@ -1,3 +1,50 @@
+<div align="center">
+
+# BetaBake REV 1.0
+
+### Industrial Embedded Single Board Computer (SBC)
+
+**A custom-designed embedded computing platform based on the NXP i.MX 6ULL,**
+integrating memory, industrial communication interfaces, display, camera and wireless connectivity.
+
+<p>
+  <img src="https://img.shields.io/badge/Hardware-Design-2563EB?style=for-the-badge&logo=circuits&logoColor=white" alt="Hardware Design">
+  <img src="https://img.shields.io/badge/SoC-NXP%20i.MX%206ULL-0066CC?style=for-the-badge" alt="NXP i.MX 6ULL">
+  <img src="https://img.shields.io/badge/EDA-Altium%20Designer-A5915F?style=for-the-badge" alt="Altium Designer">
+  <img src="https://img.shields.io/badge/PCB-8--Layer%20Design-0F766E?style=for-the-badge" alt="8-Layer PCB Design">
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/Memory-DDR3L%20%7C%20eMMC-475569?style=for-the-badge" alt="DDR3L and eMMC">
+  <img src="https://img.shields.io/badge/Industrial-Dual%20CAN-EF4444?style=for-the-badge" alt="Dual CAN">
+  <img src="https://img.shields.io/badge/Communication-RS--485%20%7C%20Ethernet-7C3AED?style=for-the-badge" alt="RS-485 and Ethernet">
+  <img src="https://img.shields.io/badge/Interfaces-USB%20%7C%20LCD%20%7C%20CSI-0891B2?style=for-the-badge" alt="USB, LCD and CSI">
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/3D-Visualization%20with%20Blender-EA580C?style=for-the-badge" alt="Blender 3D Visualization">
+  <img src="https://img.shields.io/badge/Status-Design%20Stage-F59E0B?style=for-the-badge" alt="Design Stage">
+  <img src="https://img.shields.io/badge/Physical%20Prototype-Not%20Manufactured-64748B?style=for-the-badge" alt="Physical Prototype Not Manufactured">
+</p>
+
+---
+
+**Designed by Ayoub ELBOUHI**
+
+Electrical Engineering & Embedded Systems Student  
+École Nationale des Sciences Appliquées de Marrakech (ENSA Marrakech)
+
+[Technical Documentation](BetaBake_REV_1.0.pdf) · [PCB Design](PCB/) · [Schematics](SCHEMATICS/)
+
+</div>
+
+---
+
+
+
+
+
+
 # BetaBake REV 1.0 — Industrial i.MX 6ULL SBC
 
 **BetaBake** is a hardware design project for an embedded Single Board Computer (SBC) based on the **NXP i.MX 6ULL**. The goal is to integrate embedded computing, memory, storage, and several interfaces commonly required in industrial systems into a single board, including Ethernet, dual CAN, RS-485, USB, RGB LCD, CSI camera, and Wi-Fi.
