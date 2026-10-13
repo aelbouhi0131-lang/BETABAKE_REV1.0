@@ -358,16 +358,18 @@ BETABAKE_REV1.0/
 │   ├── Copy before routing of BetaBake..PcbDoc
 │   └── README.txt
 └── SCHEMATICS/
-    ├── 01_Boot_Cfg.SchDoc
-    ├── 02_DDR3L.SchDoc
-    ├── 03_Boot_Memory.SchDoc
-    ├── 04_Ethernet.SchDoc
-    ├── 05_USB.SchDoc
-    ├── 06_CAN_RS485.SchDoc
-    ├── 07_Display_LCD.SchDoc
-    ├── 08_Debug.SchDoc
-    ├── 09_Power.SchDoc
-    └── 10_CSI.SchDoc
+  ├── 01_CPU_Core.SchDoc
+  ├── 02_DDR3L.SchDoc
+  ├── 03_Boot_Memory.SchDoc
+  ├── 04_Ethernet.SchDoc
+  ├── 05_USB.SchDoc
+  ├── 06_CAN_RS485.SchDoc
+  ├── 07_Display_LCD.SchDoc
+  ├── 08_Debug.SchDoc
+  ├── 09_Power.SchDoc
+  ├── 10_Boot_Cfg.SchDoc
+  ├── 11_CSI.SchDoc
+  └── 12_WIFI.SchDoc
 ```
 
 ### Main Files and Their Purpose
